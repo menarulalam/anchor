@@ -20,16 +20,11 @@ impl<T: ToAccountMetas> ToAccountMetas for Vec<T> {
     }
 }
 
-impl<'info, T: Accounts<'info>> Accounts for Vec<T> {
+impl<'info, T: Accounts<'info>> Accounts<'info> for Vec<T> {
     fn try_accounts(
-                    _program_id: &Pubkey,
-                    accounts: &mut Vec<T>,
+        program_id: &Pubkey,
+        accounts: &mut &[AccountInfo<'info>],
     ) -> Result<Self, ProgramError> {
-        if accounts.is_empty() {
-            return Err(ProgramError::NotEnoughAccountKeys);
-        }
-        let account = &accounts[0];
-        accounts.drain(0);
-        Ok(vec![account.clone()])
+        T::try_accounts(program_id, accounts).map(Vec::new)
     }
 }
