@@ -28,6 +28,8 @@ impl<'info, T: Accounts<'info>> Accounts<'info> for Vec<T> {
         if accounts.is_empty() {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
-        T::try_accounts(program_id, accounts).map(Vec::new)
+        let ret = T::try_accounts(program_id, accounts).map(Vec::new);
+        *accounts = &[];
+        return ret;
     }
 }
