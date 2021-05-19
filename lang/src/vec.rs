@@ -25,6 +25,9 @@ impl<'info, T: Accounts<'info>> Accounts<'info> for Vec<T> {
         program_id: &Pubkey,
         accounts: &mut &[AccountInfo<'info>],
     ) -> Result<Self, ProgramError> {
+        if accounts.is_empty() {
+            return Err(ProgramError::NotEnoughAccountKeys);
+        }
         T::try_accounts(program_id, accounts).map(Vec::new)
     }
 }
